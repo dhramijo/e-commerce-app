@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * After defining the authentication and authorization modules, we need to configure them on the Spring Security filter chain.
@@ -43,12 +46,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
 
     /**
      * This method declares the BCryptPasswordEncoder as the encoding technique, and loads user-specific data.
@@ -58,5 +55,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.parentAuthenticationManager(authenticationManagerBean())
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(bCryptPasswordEncoder);
+    }
+
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        return source;
     }
 }
